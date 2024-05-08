@@ -8,9 +8,9 @@ import keras
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-CANVAS_WIDTH = 900
-CANVAS_HEIGHT = 300
-#CENTER = CANVAS_HEIGHT // 2
+CANVAS_WIDTH = 600
+CANVAS_HEIGHT = 120
+# CENTER = CANVAS_HEIGHT // 2
 
 word_dictionary = {
     1: "A",
@@ -50,7 +50,7 @@ tk_word = tk.StringVar()
 def main() -> None:
     """whiteboard start"""
     app.title("Pizarra en Blanco")
-    app.geometry("1050x570")  # 1050pxx570px
+    app.geometry(f"{CANVAS_WIDTH+100}x{CANVAS_HEIGHT+100}")  # 1050pxx570px
     app.configure(background="#E3ECF2")
     app.resizable(False, False)
 
@@ -76,7 +76,11 @@ def main() -> None:
             smooth=True,
         )
 
-        draw1.line([cursor_x, cursor_y, work.x, work.y], "black", width=width)
+        draw1.line(
+            [cursor_x + 50, cursor_y + 50, work.x + 50, work.y + 50],
+            "black",
+            width=width,
+        )
 
         cursor_x = work.x
         cursor_y = work.y
@@ -92,7 +96,7 @@ def main() -> None:
     canvas1.place(x=50, y=10)
 
     # Declare the canvas to read
-    image1 = Image.new("L", (CANVAS_WIDTH, CANVAS_HEIGHT), "white")
+    image1 = Image.new("L", (CANVAS_WIDTH + 100, CANVAS_HEIGHT + 100), "white")
     draw1 = ImageDraw.Draw(image1)
 
     # Events
@@ -102,7 +106,7 @@ def main() -> None:
     # Reset
     def erase_canvas():
         canvas1.delete("all")
-        draw1.rectangle((0, 0, CANVAS_WIDTH, CANVAS_HEIGHT), "white")
+        draw1.rectangle((0, 0, CANVAS_WIDTH + 100, CANVAS_HEIGHT + 100), "white")
         image1.save("drawing.jpg")
         global tk_word
         tk_word.set("")
@@ -110,7 +114,7 @@ def main() -> None:
     # Delete Button
     tk.Button(
         app, text="Borrar todo", font=("Arial", 12), bg="#f2f3f5", command=erase_canvas
-    ).place(x=50, y=370)
+    ).place(x=50, y=CANVAS_HEIGHT + 60)
 
     # Predict!
     def predict():
@@ -143,7 +147,7 @@ def main() -> None:
             # Drawing a rectangle on copied image
             rect = cv2.rectangle(im2, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-            #cv2.imshow("Display", rect)
+            # cv2.imshow("Display", rect)
 
             # Cropping the text block for giving input to OCR
             cropped = cv2.resize(im2[y : y + h, x : x + w], (28, 28))
@@ -162,10 +166,10 @@ def main() -> None:
 
             word += word_dictionary[np.argmax(prediction)]
 
-        print(word) #::-1
+        print(word)  #::-1
         global tk_word
 
-        tk_word.set(word) #::-1
+        tk_word.set(word)  #::-1
 
     tk.Button(
         app,
@@ -173,10 +177,23 @@ def main() -> None:
         font=("Arial", 12),
         bg="#f2f3f5",
         command=predict,
-    ).place(x=350, y=370)
+    ).place(x=150, y=CANVAS_HEIGHT + 60)
 
-    tk.Label(app, textvariable=tk_word, font="Arial, 12", bg="white", fg="black").place(
-        x=50, y=470
+    frame = tk.Frame(
+        app,
+        width=CANVAS_WIDTH,
+        height=20,
     )
+    frame.pack_propagate(0)
+    frame.place(x=50, y=CANVAS_HEIGHT + 30)
+
+    tk.Label(
+        frame,
+        textvariable=tk_word,
+        font="Arial, 12",
+        bg="white",
+        fg="black",
+        width=200,
+    ).pack(fill=tk.BOTH, expand=1)
 
     app.mainloop()
