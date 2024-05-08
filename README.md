@@ -20,6 +20,12 @@ On ubuntu
 source .venv/bin/activate
 ```
 
+Install tkinter on ubuntu
+```
+apt-get install python-tk
+apt-get install python3-tk
+```
+
 Install dependencies once inside venv:
 
 ```powershell

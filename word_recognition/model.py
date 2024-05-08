@@ -20,7 +20,7 @@ AMOUNT_OF_LETTER_CATEGORIES = 27  # Numbers of letters
 amount_of_brightness = 255
 # @title Hyperparameters
 learning_rate = 0.002
-batch_size = 758
+batch_size = 256
 validation_split = 0.3
 
 
@@ -45,6 +45,7 @@ def train():
     # train_features.shape -> [rows number, columns number]
     train_features_amount = train_features.shape[0]  # Records (= 88799)
 
+    # Convert 784px to bidimentional
     train_features = np.reshape(train_features, (train_features_amount, 28, 28))
 
     # @title Normalization and Reshaping of the features
@@ -71,7 +72,8 @@ def train():
             plt.plot(epochs[1:], x[1:], label=m)
 
         plt.legend()
-        plt.show()
+        #plt.show()
+        plt.savefig("plot-train.jpg")
 
         print("Loaded the plot_curve function.")
 
@@ -82,10 +84,12 @@ def train():
         model = keras.models.Sequential()
 
         model.add(keras.layers.Flatten(input_shape=(image_pixels, image_pixels)))
+        model.add(keras.layers.Dense(units=256, activation="relu"))
+        model.add(keras.layers.Dropout(rate=0.2))
         model.add(keras.layers.Dense(units=128, activation="relu"))
-        model.add(keras.layers.Dropout(rate=0.2))
+        model.add(keras.layers.Dropout(rate=0.1))
         model.add(keras.layers.Dense(units=64, activation="relu"))
-        model.add(keras.layers.Dropout(rate=0.2))
+        model.add(keras.layers.Dropout(rate=0.1))
         model.add(
             keras.layers.Dense(units=AMOUNT_OF_LETTER_CATEGORIES, activation="softmax")
         )
@@ -125,7 +129,7 @@ def train():
 
     my_model = create_model(learning_rate)
 
-    epochs = 20
+    epochs = 30
 
     # Train the model on the normalized training set.
     epochs, hist = train_model(

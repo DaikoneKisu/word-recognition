@@ -10,7 +10,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 CANVAS_WIDTH = 900
 CANVAS_HEIGHT = 300
-CENTER = CANVAS_HEIGHT // 2
+#CENTER = CANVAS_HEIGHT // 2
 
 word_dictionary = {
     1: "A",
@@ -81,20 +81,25 @@ def main() -> None:
         cursor_x = work.x
         cursor_y = work.y
 
+    # Add icon to app
     logo_icon = tk.PhotoImage(file="word_recognition/assets/logo.png")
     app.iconphoto(False, logo_icon)
 
+    # Declare the canvas
     canvas1 = tk.Canvas(
         app, bg="#ffffff", width=CANVAS_WIDTH, height=CANVAS_HEIGHT, cursor="tcross"
     )
     canvas1.place(x=50, y=10)
 
+    # Declare the canvas to read
     image1 = Image.new("L", (CANVAS_WIDTH, CANVAS_HEIGHT), "white")
     draw1 = ImageDraw.Draw(image1)
 
+    # Events
     canvas1.bind("<Button-1>", get_cursor_position)
     canvas1.bind("<B1-Motion>", draw_line1)
 
+    # Reset
     def erase_canvas():
         canvas1.delete("all")
         draw1.rectangle((0, 0, CANVAS_WIDTH, CANVAS_HEIGHT), "white")
@@ -102,10 +107,12 @@ def main() -> None:
         global tk_word
         tk_word.set("")
 
+    # Delete Button
     tk.Button(
         app, text="Borrar todo", font=("Arial", 12), bg="#f2f3f5", command=erase_canvas
     ).place(x=50, y=370)
 
+    # Predict!
     def predict():
         my_model = keras.saving.load_model("model.keras", compile=True)
 
@@ -128,13 +135,15 @@ def main() -> None:
 
         word = ""
 
+        contours = sorted(contours, key=lambda cnt: cv2.boundingRect(cnt)[0])
+
         for cnt in contours:
             x, y, w, h = cv2.boundingRect(cnt)
 
             # Drawing a rectangle on copied image
             rect = cv2.rectangle(im2, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-            cv2.imshow("Display", rect)
+            #cv2.imshow("Display", rect)
 
             # Cropping the text block for giving input to OCR
             cropped = cv2.resize(im2[y : y + h, x : x + w], (28, 28))
@@ -153,10 +162,10 @@ def main() -> None:
 
             word += word_dictionary[np.argmax(prediction)]
 
-        print(word[::-1])
+        print(word) #::-1
         global tk_word
 
-        tk_word.set(word[::-1])
+        tk_word.set(word) #::-1
 
     tk.Button(
         app,
