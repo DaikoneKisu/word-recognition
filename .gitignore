@@ -1,0 +1,8 @@
+.venv
+model.keras
+drawing.jpg
+build
+word_recognition.egg-info
+word_recognition/__pycache__
+word_recognition/assets/emnist-letters-test.csv
+word_recognition/assets/emnist-letters-train.csv
