@@ -9,7 +9,15 @@ Create and activate virtual environment:
 
 ```powershell
 python -m venv .venv
+
+On windows
+```
 .venv/Scripts/Activate.ps1
+```
+
+On ubuntu
+```
+source .venv/bin/activate
 ```
 
 Install dependencies once inside venv:
